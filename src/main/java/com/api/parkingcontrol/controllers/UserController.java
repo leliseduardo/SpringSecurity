@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -47,12 +48,33 @@ public class UserController {
         List<UserModel> users = userService.getUsers();
 
         List<UserDto> dtos = users.stream().map(user -> {
-            UserDto dto = UserDto.create(user);
+            UserDto dto = new UserDto();
             dto.setRoleNames(user.getRoleNames());
+            dto.setId(user.getUserId());
+            dto.setPassword(user.getPassword());
+            dto.setUsername(user.getUsername());
             return dto;
         }).collect(Collectors.toList());
 
         return ResponseEntity.ok(dtos);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity get(@PathVariable("id") UUID id) {
+        Optional<UserModel> user = userService.findById(id);
+
+        if (!user.isPresent()){
+            return new ResponseEntity("User não encontrado", HttpStatus.NOT_FOUND);
+        }
+
+        UserDto dto = new UserDto();
+        dto.setId(user.get().getUserId());
+        dto.setPassword(user.get().getPassword());
+        dto.setUsername(user.get().getUsername());
+        dto.setRoleNames(user.get().getRoleNames());
+
+        return ResponseEntity.ok(dto);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -67,12 +89,58 @@ public class UserController {
             userModel.getRoles().add(roleModel);
         }
         userModel = userService.save(userModel);
+        userDto.setId(userModel.getUserId());
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(userModel));
     }
     catch (Exception e){
         return ResponseEntity.badRequest().body(e.getMessage());
     }
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity atualizar(@PathVariable("id") UUID id, @RequestBody UserDto userDto){
+        Optional<UserModel> user = userService.findById(id);
+        if(!user.isPresent()){
+            return new ResponseEntity("Jogador não encontrado", HttpStatus.NOT_FOUND);
+        }
+        try{
+            UserModel userModel = converter(userDto);
+            for (RoleName role : userDto.getRoleNames()) {
+                RoleModel roleModel = roleService.getByRoleName(role);
+                roleModel.getUsers().add(userModel);
+                userModel.getRoles().add(roleModel);
+            }
+            userModel.setUserId(id);
+            userDto.setId(userModel.getUserId());
+            userDto.setPassword(userModel.getPassword());
+            userDto.setUsername(userModel.getUsername());
+            userDto.setRoleNames(userModel.getRoleNames());
+            userService.save(userModel);
+            return ResponseEntity.ok(userDto);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity excluir(@PathVariable("id") UUID id){
+        Optional<UserModel> user = userService.findById(id);
+        if(!user.isPresent()){
+            return new ResponseEntity("Jogador não encontrado", HttpStatus.NOT_FOUND);
+        }
+        try {
+            UserDto dto = new UserDto();
+            dto.setId(user.get().getUserId());
+            dto.setPassword("Usuário excluído");
+            dto.setUsername(user.get().getUsername());
+            dto.setRoleNames(user.get().getRoleNames());
+            userService.delete(user.get());
+            return ResponseEntity.ok(dto);
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     public UserModel converter(UserDto dto) {
@@ -83,3 +151,5 @@ public class UserController {
         return user;
     }
 }
+
+

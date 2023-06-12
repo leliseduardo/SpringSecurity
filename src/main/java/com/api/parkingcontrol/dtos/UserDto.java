@@ -12,11 +12,20 @@ import java.util.UUID;
 
 public class UserDto {
 
+    private UUID id;
     @NotBlank
     private String username;
     @NotBlank
     private String password;
     private List<RoleName> roleNames;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
@@ -40,10 +49,5 @@ public class UserDto {
 
     public void setRoleNames(List<RoleName> roleNames) {
         this.roleNames = roleNames;
-    }
-
-    public static UserDto create(UserModel userModel) {
-        ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(userModel, UserDto.class);
     }
 }
