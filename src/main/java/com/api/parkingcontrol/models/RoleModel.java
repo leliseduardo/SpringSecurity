@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ public class RoleModel implements GrantedAuthority, Serializable {
     private RoleName roleName;
 
     @ManyToMany(mappedBy = "roles")
-    private List<UserModel> users;
+    private List<UserModel> users = new ArrayList<UserModel>();
 
 
     @Override
@@ -52,4 +53,6 @@ public class RoleModel implements GrantedAuthority, Serializable {
     public void setUsers(List<UserModel> users) {
         this.users = users;
     }
+
+
 }

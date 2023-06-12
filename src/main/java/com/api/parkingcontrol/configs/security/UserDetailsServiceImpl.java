@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,6 +32,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return new User(userModel.getUsername(), userModel.getPassword(), true, true, true, true, userModel.getAuthorities());
     }
+
+    public List<UserModel> getUsers() { return userRepository.findAll(); }
 
     @Transactional
     public UserModel save(UserModel userModel) {

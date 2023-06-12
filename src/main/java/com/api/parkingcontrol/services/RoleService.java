@@ -1,5 +1,6 @@
 package com.api.parkingcontrol.services;
 
+import com.api.parkingcontrol.enums.RoleName;
 import com.api.parkingcontrol.models.RoleModel;
 import com.api.parkingcontrol.repositories.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class RoleService {
     public RoleService(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
+
+    public RoleModel getByRoleName(RoleName roleName) { return roleRepository.getByRoleName(roleName); }
 
     @Transactional
     public RoleModel save(RoleModel roleModel) {
