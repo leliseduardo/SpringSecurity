@@ -1,13 +1,16 @@
 package com.api.parkingcontrol.models;
 
+import com.api.parkingcontrol.enums.RoleName;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "TB_USER")
@@ -26,7 +29,7 @@ public class UserModel implements UserDetails, Serializable {
     @JoinTable(name = "TB_USERS_ROLES",
         joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<RoleModel> roles;
+    private List<RoleModel> roles = new ArrayList<RoleModel>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -77,5 +80,17 @@ public class UserModel implements UserDetails, Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<RoleModel> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<RoleModel> roles) {
+        this.roles = roles;
+    }
+
+    public  List<RoleName> getRoleNames(){
+        return roles.stream().map(role -> role.getRoleName()).collect(Collectors.toList());
     }
 }
