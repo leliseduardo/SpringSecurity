@@ -51,7 +51,7 @@ public class UserController {
             UserDto dto = new UserDto();
             dto.setRoleNames(user.getRoleNames());
             dto.setId(user.getUserId());
-            dto.setPassword(user.getPassword());
+            dto.setPassword("***");
             dto.setUsername(user.getUsername());
             return dto;
         }).collect(Collectors.toList());
@@ -70,7 +70,7 @@ public class UserController {
 
         UserDto dto = new UserDto();
         dto.setId(user.get().getUserId());
-        dto.setPassword(user.get().getPassword());
+        dto.setPassword("***");
         dto.setUsername(user.get().getUsername());
         dto.setRoleNames(user.get().getRoleNames());
 
