@@ -35,7 +35,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     public List<UserModel> getUsers() { return userRepository.findAll(); }
 
-    @Transactional
     public UserModel save(UserModel userModel) {
         return userRepository.save(userModel);
     }
@@ -48,7 +47,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return userRepository.findById(userId);
     }
 
-    @Transactional
     public void delete(UserModel userModel) {
         userRepository.delete(userModel);
     }

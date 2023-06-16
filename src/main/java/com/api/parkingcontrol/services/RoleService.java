@@ -33,8 +33,8 @@ public class RoleService {
         return roleRepository.findAll(pageable);
     }
 
-    public Optional<RoleModel> findById(UUID userId) {
-        return roleRepository.findById(userId);
+    public Optional<RoleModel> findById(UUID roleId) {
+        return roleRepository.findById(roleId);
     }
 
     @Transactional
