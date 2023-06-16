@@ -19,10 +19,23 @@ public class WebSecurityConfigV2 {
                 .httpBasic()
                 .and()
                 .authorizeHttpRequests()
-                .anyRequest().authenticated()
+                .antMatchers(HttpMethod.GET, "/parking-spot/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/parking-spot").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/parking-spot/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/parking-spot/**").hasRole("ADMIN")
+                .anyRequest()
+                .authenticated()
                 .and()
                 .csrf().disable();
         return http.build();
+//        http
+//                .httpBasic()
+//                .and()
+//                .authorizeHttpRequests()
+//                .anyRequest().authenticated()
+//                .and()
+//                .csrf().disable();
+//        return http.build();
     }
 
     @Bean
